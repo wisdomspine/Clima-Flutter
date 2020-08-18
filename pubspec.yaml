@@ -11,6 +11,10 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^0.1.2
+  geolocator: ^5.3.2+2
+  http: ^0.12.2
+  flutter_spinkit: "^4.1.2"
+  rflutter_alert: ^1.0.3
 
 dev_dependencies:
   flutter_test:
@@ -20,10 +24,10 @@ flutter:
   uses-material-design: true
 
   assets:
-  - images/
+    - images/
 
   fonts:
-  - family: Spartan MB
-    fonts:
-    - asset: fonts/SpartanMB-Black.otf
-      weight: 900
+    - family: Spartan MB
+      fonts:
+        - asset: fonts/SpartanMB-Black.otf
+          weight: 900
