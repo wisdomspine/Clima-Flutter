@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:clima/glitches/Glitch.dart';
+import 'package:dartz/dartz.dart';
 import 'package:http/http.dart' as http;
 
 class NetworkHelper {
@@ -7,12 +9,15 @@ class NetworkHelper {
 
   NetworkHelper(this.endpoint);
 
-  Future<Map<String, dynamic>> getData() async {
+  Future<Either<Glitch, Map<String, dynamic>>> getData() async {
     http.Response response = await http.get(endpoint);
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      return Right(jsonDecode(response.body));
     } else {
-      return null;
+      return Left(Glitch(
+        title: "Network error",
+        description: "A network error has occured. check you mobile connection",
+      ));
     }
   }
 }

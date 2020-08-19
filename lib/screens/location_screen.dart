@@ -1,8 +1,8 @@
+import 'package:clima/glitches/Glitch.dart';
 import 'package:clima/screens/city_screen.dart';
 import 'package:clima/services/weather.dart';
 import 'package:flutter/material.dart';
 import 'package:clima/utilities/constants.dart';
-import 'package:rflutter_alert/rflutter_alert.dart' as rAlert;
 
 class LocationScreen extends StatefulWidget {
   final dynamic weatherData;
@@ -29,11 +29,7 @@ class _LocationScreenState extends State<LocationScreen> {
     updateUi(widget.weatherData);
   }
 
-  void updateUi(dynamic weatherData, {BuildContext context}) {
-    if (weatherData == null) {
-      _showDialog(context);
-      return;
-    }
+  void updateUi(dynamic weatherData) {
     _weatherData = weatherData;
     weatherIcon = weatherModel.getWeatherIcon(_weatherData["weather"][0]["id"]);
     temperature = num.parse("${_weatherData["main"]["temp"]}").toInt();
@@ -42,13 +38,16 @@ class _LocationScreenState extends State<LocationScreen> {
     setState(() {});
   }
 
-  void _showDialog(BuildContext context) {
-    if (context == null) return;
+  void _showDialog(BuildContext context, Glitch glitch) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         content: Text(
-          "Location is turned off",
+          glitch?.description,
+          textAlign: TextAlign.center,
+        ),
+        title: Text(
+          glitch?.title,
           textAlign: TextAlign.center,
         ),
         actions: [
@@ -59,7 +58,7 @@ class _LocationScreenState extends State<LocationScreen> {
             child: Text("Cancel"),
           ),
           RaisedButton(
-            child: Text("Turn on"),
+            child: Text("Got it"),
             onPressed: () {},
           )
         ],
@@ -91,7 +90,9 @@ class _LocationScreenState extends State<LocationScreen> {
                   FlatButton(
                     onPressed: () {
                       weatherModel.getLocationWeather().then((value) {
-                        updateUi(value, context: context);
+                        value.fold((l) => _showDialog(context, l), (r) {
+                          updateUi(value);
+                        });
                       });
                     },
                     child: Icon(
@@ -111,7 +112,10 @@ class _LocationScreenState extends State<LocationScreen> {
                             ? weatherModel
                                 .getCityWeather(newCity)
                                 .then((value) {
-                                updateUi(value, context: context);
+                                value.fold(
+                                  (l) => _showDialog(context, l),
+                                  (r) => updateUi(r),
+                                );
                               })
                             : null;
                       });

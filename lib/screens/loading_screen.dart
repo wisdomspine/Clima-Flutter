@@ -12,14 +12,16 @@ class _LoadingScreenState extends State<LoadingScreen> {
   final WeatherModel weatherModel = WeatherModel();
   void getLocationData() {
     weatherModel.getLocationWeather().then((value) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (BuildContext context) => LocationScreen(
-            weatherData: value,
+      value.fold((l) => null, (r) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) => LocationScreen(
+              weatherData: r,
+            ),
           ),
-        ),
-      );
+        );
+      });
     });
   }
 
